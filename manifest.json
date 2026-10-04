@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "TUF Enhancer 2.0",
+  "version": "1.0.0",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://gist.githubusercontent.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/tuf.png",
+      "32": "assets/tuf.png",
+      "48": "assets/tuf.png",
+      "128": "assets/tuf.png"
+    },
+    "default_title": "TUF Enhancer 2.0"
+  },
+  "icons": {
+    "16": "assets/tuf.png",
+    "32": "assets/tuf.png",
+    "48": "assets/tuf.png",
+    "128": "assets/tuf.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://takeuforward.org/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "final_sheet.json",
+        "assets/gfg.svg",
+        "assets/tuf.svg"
+      ],
+      "matches": ["https://takeuforward.org/*"]
+    }
+  ]
+}

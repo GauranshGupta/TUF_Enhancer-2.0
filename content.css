@@ -1,0 +1,151 @@
+/* Container Wrapper */
+.tuf-gfg-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Button Base */
+.tuf-gfg-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+/* Icon inside Button */
+.tuf-gfg-btn svg,
+.tuf-gfg-btn img {
+  width: 0.95rem;
+  height: 0.95rem;
+  pointer-events: none;
+  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover & Active States */
+.tuf-gfg-btn:hover {
+  background-color: rgba(47, 157, 68, 0.14) !important;
+  border-color: rgba(47, 157, 68, 0.25) !important;
+}
+
+.tuf-gfg-btn:hover svg,
+.tuf-gfg-btn:hover img {
+  transform: scale(1.15);
+}
+
+.tuf-gfg-btn:active {
+  transform: scale(0.92);
+  background-color: rgba(47, 157, 68, 0.24) !important;
+}
+
+/* Tooltip on Hover via [data-tooltip] */
+.tuf-gfg-wrapper[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  color: #ffffff;
+  background-color: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 99999;
+}
+
+/* Tooltip Arrow */
+.tuf-gfg-wrapper[data-tooltip]::after {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 1px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  border-width: 5px 5px 0 5px;
+  border-style: solid;
+  border-color: #18181b transparent transparent transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 99999;
+}
+
+/* Show Tooltip on Hover */
+.tuf-gfg-wrapper:hover[data-tooltip]::before,
+.tuf-gfg-wrapper:hover[data-tooltip]::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* --- Floating Study Room Widget --- */
+#tuf-room-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 250px;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #fafafa;
+  z-index: 999999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.tuf-room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #27272a;
+  padding-bottom: 6px;
+}
+
+.tuf-room-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #60a5fa;
+}
+
+.tuf-room-count {
+  font-size: 11px;
+  color: #22c55e;
+}
+
+.tuf-room-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-top: 6px;
+  gap: 6px;
+}
+
+.tuf-room-member {
+  display: flex;
+  flex-direction: column;
+  background: #27272a;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+}

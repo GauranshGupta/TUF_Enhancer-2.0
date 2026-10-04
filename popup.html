@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      width: 230px;
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #18181b;
+      color: #f4f4f5;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    h3 {
+      margin: 0 0 12px;
+      font-size: 14px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-start { background-color: #22c55e; color: white; }
+    .btn-stop { background-color: #ef4444; color: white; }
+    .status { margin-top: 8px; font-size: 12px; color: #a1a1aa; }
+    
+    /* Study Room UI Styles */
+    .divider {
+      height: 1px;
+      background: #3f3f46;
+      margin: 16px 0;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    input {
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      color: white;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      outline: none;
+    }
+    input:focus { border-color: #3b82f6; }
+    .btn-room { background: #3b82f6; color: white; padding: 8px; }
+    .btn-room:hover { background: #2563eb; }
+  </style>
+</head>
+<body>
+  <h3> TUF Enhancer 2.0</h3>
+  <button id="toggleBtn" class="btn btn-start">Click to Start</button>
+  <div id="statusText" class="status">Status: OFF</div>
+
+  <div class="divider"></div>
+
+  <div class="field-group">
+    <input type="text" id="usernameInput" placeholder="Your display name" />
+    <input type="text" id="roomInput" placeholder="Room ID (e.g. sde-sheet)" />
+    <button id="saveRoomBtn" class="btn btn-room">Join Study Room</button>
+    <div id="roomStatusText" class="status">No active room</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
