@@ -90,20 +90,20 @@ flowchart LR
     Content --> DOM[Injected GFG Buttons]
     Content --> Storage[chrome.storage.local]
     Content --> Socket[WebSocket Client]
-    Socket --> Backend[Node.js WebSocket Server]
+    Socket --> NodeServer[Node.js WebSocket Server]
     Content --> Gist[GitHub Raw Gist Dataset]
     Gist --> Map[Problem -> GFG mapping]
-    Backend --> Room[Room Members / Current Problem]
+    NodeServer --> Room[Room Members / Current Problem]
 
     subgraph Browser
       Content
       DOM
       Storage
+      Socket
     end
 
-    subgraph Backend
-      Socket
-      Backend
+    subgraph Backend_System [Backend]
+      NodeServer
       Room
     end
 ```
