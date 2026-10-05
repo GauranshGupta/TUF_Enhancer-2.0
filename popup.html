@@ -1,73 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <title>TUF Enhancer</title>
   <style>
-    body {
-      width: 230px;
-      margin: 0;
-      padding: 16px;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #18181b;
-      color: #f4f4f5;
-      text-align: center;
-      box-sizing: border-box;
-    }
-    h3 {
-      margin: 0 0 12px;
-      font-size: 14px;
-    }
-    .btn {
-      width: 100%;
-      padding: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-start { background-color: #22c55e; color: white; }
-    .btn-stop { background-color: #ef4444; color: white; }
-    .status { margin-top: 8px; font-size: 12px; color: #a1a1aa; }
-    
-    /* Study Room UI Styles */
-    .divider {
-      height: 1px;
-      background: #3f3f46;
-      margin: 16px 0;
-    }
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    input {
-      background: #27272a;
-      border: 1px solid #3f3f46;
-      color: white;
-      padding: 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      outline: none;
-    }
-    input:focus { border-color: #3b82f6; }
-    .btn-room { background: #3b82f6; color: white; padding: 8px; }
-    .btn-room:hover { background: #2563eb; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { width: 300px; padding: 16px; background: #0f172a; color: #f8fafc; }
+    h2 { font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .toggle-wrap { display: flex; align-items: center; justify-content: space-between; background: #1e293b; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; }
+    .switch { position: relative; display: inline-block; width: 38px; height: 20px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background: #475569; border-radius: 20px; transition: .2s; }
+    .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .2s; }
+    input:checked + .slider { background: #10b981; }
+    input:checked + .slider:before { transform: translateX(18px); }
+
+    .card { background: #1e293b; border-radius: 8px; padding: 12px; margin-top: 10px; }
+    label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 600; display: block; margin-bottom: 4px; }
+    input[type="text"] { width: 100%; padding: 8px 10px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; color: #fff; font-size: 13px; margin-bottom: 10px; }
+    input[type="text"]:focus { outline: none; border-color: #3b82f6; }
+
+    .btn { width: 100%; padding: 8px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.15s; }
+    .btn-primary { background: #3b82f6; color: #fff; margin-bottom: 6px; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-success { background: #10b981; color: #fff; }
+    .btn-success:hover { background: #059669; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-secondary { background: #334155; color: #e2e8f0; }
+    .btn-secondary:hover { background: #475569; }
+
+    .active-room-box { display: flex; align-items: center; justify-content: space-between; background: #0f172a; padding: 8px 10px; border-radius: 6px; margin: 8px 0; border: 1px dashed #38bdf8; }
+    .room-badge { font-weight: 700; color: #38bdf8; letter-spacing: 0.05em; font-size: 13px; }
+    .status-msg { font-size: 11px; margin-top: 6px; min-height: 14px; }
+    .status-error { color: #f87171; }
+    .status-ok { color: #4ade80; }
+    .divider { height: 1px; background: #334155; margin: 12px 0; }
   </style>
 </head>
 <body>
-  <h3> TUF Enhancer 2.0</h3>
-  <button id="toggleBtn" class="btn btn-start">Click to Start</button>
-  <div id="statusText" class="status">Status: OFF</div>
+  <h2>
+    <span>TUF Enhancer</span>
+    <span style="font-size: 11px; color: #94a3b8;">v2.0</span>
+  </h2>
 
-  <div class="divider"></div>
+  <div class="toggle-wrap">
+    <span style="font-size: 13px; font-weight: 500;">Enable Features</span>
+    <label class="switch">
+      <input type="checkbox" id="extensionToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
 
-  <div class="field-group">
-    <input type="text" id="usernameInput" placeholder="Your display name" />
-    <input type="text" id="roomInput" placeholder="Room ID (e.g. sde-sheet)" />
-    <button id="saveRoomBtn" class="btn btn-room">Join Study Room</button>
-    <div id="roomStatusText" class="status">No active room</div>
+  <div class="card">
+    <label for="usernameInput">Your Username</label>
+    <input type="text" id="usernameInput" placeholder="e.g. CodeNinja" />
+
+    <!-- View: Already In A Room -->
+    <div id="inRoomSection" style="display: none;">
+      <label>Current Room</label>
+      <div class="active-room-box">
+        <span class="room-badge" id="currentRoomText">TUF-XXXX</span>
+        <button id="copyRoomBtn" class="btn btn-secondary" style="width: auto; padding: 4px 8px; font-size: 11px;">Copy ID</button>
+      </div>
+      <button id="leaveRoomBtn" class="btn btn-danger" style="margin-top: 6px;">Leave Room</button>
+    </div>
+
+    <!-- View: Not in a Room -->
+    <div id="noRoomSection">
+      <button id="createRoomBtn" class="btn btn-primary">Create New Room</button>
+      
+      <div class="divider"></div>
+
+      <label for="roomIdInput">Or Join Existing Room</label>
+      <input type="text" id="roomIdInput" placeholder="Enter Room ID (e.g. TUF-7A9B)" />
+      <button id="joinRoomBtn" class="btn btn-success">Join Room</button>
+    </div>
+
+    <div id="statusMsg" class="status-msg"></div>
   </div>
 
   <script src="popup.js"></script>

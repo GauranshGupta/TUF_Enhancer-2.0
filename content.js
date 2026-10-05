@@ -1,4 +1,3 @@
-
 console.log("🟢 [TUF-GFG] Extension content script active!");
 
 function cleanKey(str) {
@@ -18,8 +17,10 @@ function connectRoomSocket() {
   if (ws || !currentRoomConfig?.roomId || !currentRoomConfig?.username) return;
 
   try {
-    ws = new WebSocket("wss://server-tuf-enhancer.onrender.com/");
+    // 1. THIS LINE MUST BE PRESENT AND UNCOMMENTED
+    ws = new WebSocket("wss://server-tuf-enhancer-final.onrender.com/");
 
+    // 2. Now ws is no longer null, and this will execute successfully
     ws.onopen = () => {
       console.log("🟢 [TUF-GFG] Connected to live study room");
       ws.send(JSON.stringify({
@@ -28,11 +29,16 @@ function connectRoomSocket() {
         username: currentRoomConfig.username
       }));
     };
-
     ws.onmessage = (evt) => {
-      const data = JSON.parse(evt.data);
-      if (data.type === "ROOM_PRESENCE") {
-        renderRoomWidget(data.members);
+      try {
+        const data = JSON.parse(evt.data);
+        if (data.type === "ROOM_PRESENCE") {
+          renderRoomWidget(data.members);
+        } else if (data.type === "ROOM_ERROR") {
+          console.warn("Room error:", data.message);
+        }
+      } catch (e) {
+        console.error("Malformed socket message:", e);
       }
     };
 
@@ -45,9 +51,11 @@ function connectRoomSocket() {
     console.warn("WebSocket connection failure:", err);
   }
 }
-
 function disconnectRoomSocket() {
   if (ws) {
+    if (ws.readyState === WebSocket.OPEN && currentRoomConfig) {
+      ws.send(JSON.stringify({ type: "LEAVE_ROOM" }));
+    }
     ws.close();
     ws = null;
   }
@@ -70,9 +78,9 @@ function renderRoomWidget(members = []) {
     widget = document.createElement("div");
     widget.id = "tuf-room-widget";
     widget.style.cssText = `
-      position: fixed; bottom: 24px; right: 24px; width: 250px; background: #18181b;
-      border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 12px;
-      font-family: sans-serif; color: #fafafa; z-index: 999999; box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+      position: fixed; bottom: 24px; right: 24px; width: 260px; background: #18181b;
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 12px;
+      font-family: sans-serif; color: #fafafa; z-index: 999999; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     `;
     document.body.appendChild(widget);
   }
@@ -89,14 +97,26 @@ function renderRoomWidget(members = []) {
   `).join("");
 
   widget.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #27272a; padding-bottom: 6px;">
-      <span style="font-size: 12px; font-weight: 600; color: #60a5fa;">Room: ${currentRoomConfig.roomId}</span>
-      <span style="font-size: 11px; color: #22c55e;">● ${members.length} online</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #27272a; padding-bottom: 8px;">
+      <div>
+        <span style="font-size: 12px; font-weight: 700; color: #60a5fa;">${currentRoomConfig.roomId}</span>
+        <button id="tuf-widget-copy-btn" style="background: #27272a; border: 1px solid #3f3f46; color: #d4d4d8; font-size: 10px; border-radius: 4px; padding: 2px 6px; margin-left: 6px; cursor: pointer;">Copy</button>
+      </div>
+      <span style="font-size: 11px; color: #22c55e; font-weight: 500;">● ${members.length} online</span>
     </div>
     <div style="display: flex; flex-direction: column; max-height: 180px; overflow-y: auto;">
       ${memberItems}
     </div>
   `;
+
+  const copyBtn = document.getElementById("tuf-widget-copy-btn");
+  if (copyBtn) {
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(currentRoomConfig.roomId);
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => { copyBtn.textContent = "Copy"; }, 1500);
+    };
+  }
 }
 
 function broadcastProblem(title) {
@@ -122,12 +142,9 @@ function createGfgButton(gfgUrl) {
   img.alt = "GFG";
   img.className = "size-4 w-[14px] h-[14px]";
 
-  // Safely attempt to get the image URL
   try {
     img.src = chrome.runtime.getURL("assets/gfg.svg");
   } catch (err) {
-    // If context is invalidated, fallback to a blank image or text so the page doesn't crash
-    console.warn("🟢 [TUF-GFG] Please refresh the page to reconnect the extension.");
     a.textContent = "GFG";
     a.style.fontSize = "10px";
   }
@@ -170,7 +187,6 @@ function inject() {
     if (!actionsPack) return;
 
     const wrap = createGfgButton(gfgUrl);
-
     const lcWrap = actionsPack.querySelector("a[href*='leetcode.com']")?.closest("[class*='actionButtonWrap']");
     const utilityWrap = actionsPack.querySelector(
       "button[aria-label='Notes'], [data-notes-trigger='true'], button[aria-label='Bookmark'], button[aria-label='More options']"
@@ -190,12 +206,9 @@ async function loadDatabase() {
   if (isDataLoaded) return true;
 
   try {
-    // 1. Replace this with your copied Raw Gist URL
     const gistUrl = "https://gist.githubusercontent.com/GauranshGupta/8f8a4663c8b067634d9d35b1e1d2a847/raw/c4d268bdec540e745ae5785d96e2445caddaa937/final_sheet.json";
-    
-    // 2. Add a cache-buster (?t=...) so users instantly get your updates without waiting for GitHub's cache to clear
     const fetchUrl = `${gistUrl}?t=${Date.now()}`;
-    
+
     const response = await fetch(fetchUrl);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const sheetData = await response.json();
@@ -249,26 +262,21 @@ function stop() {
   disconnectRoomSocket();
 }
 
-// 1. Initial State Check on Page Load
-// 1. Check Initial State on Page Load
+// Check initial state
 chrome.storage.local.get({ isActive: false, roomConfig: null }, (data) => {
   currentRoomConfig = data.roomConfig;
-  
   if (data.isActive) {
-    // Delay injection to allow React to finish hydrating the DOM
-    setTimeout(() => {
-      start();
-    }, 1500);
+    setTimeout(() => { start(); }, 1200);
   }
 });
 
-// 2. Real-time listener for popup toggle clicks and room updates
+// React dynamically to storage modifications
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local") {
     if (changes.roomConfig) {
       currentRoomConfig = changes.roomConfig.newValue;
-      disconnectRoomSocket(); 
-      if (isExtensionActive) connectRoomSocket();
+      disconnectRoomSocket();
+      if (isExtensionActive && currentRoomConfig) connectRoomSocket();
     }
 
     if (changes.isActive !== undefined) {

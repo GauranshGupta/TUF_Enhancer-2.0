@@ -2,7 +2,7 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "search_gfg") {
     const q = encodeURIComponent(request.query);
-    const url = `https://practice.geeksforgeeks.org/api/v1/problems/?page=1&query=${q}`;
+    const url = `[https://practice.geeksforgeeks.org/api/v1/problems/?page=1&query=$](https://practice.geeksforgeeks.org/api/v1/problems/?page=1&query=$){q}`;
 
     fetch(url, {
       headers: {
@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       })
       .then((data) => {
         const slug = data?.results?.[0]?.slug;
-        const gfgUrl = slug ? `https://www.geeksforgeeks.org/problems/${slug}/1` : "";
+        const gfgUrl = slug ? `[https://www.geeksforgeeks.org/problems/$](https://www.geeksforgeeks.org/problems/$){slug}/1` : "";
         sendResponse({ success: true, url: gfgUrl });
       })
       .catch((err) => {
